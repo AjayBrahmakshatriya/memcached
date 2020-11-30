@@ -13,6 +13,7 @@
  *      Anatoly Vorobey <mellon@pobox.com>
  *      Brad Fitzpatrick <brad@danga.com>
  */
+//#include <sys/ioctl.h>
 #include "memcached.h"
 #ifdef EXTSTORE
 #include "storage.h"
@@ -62,6 +63,7 @@
 #if defined(__FreeBSD__)
 #include <sys/sysctl.h>
 #endif
+#include <sys/ioctl.h>
 
 /*
  * forward declarations
@@ -4782,7 +4784,30 @@ static int _mc_meta_load_cb(const char *tag, void *ctx, void *data) {
     return reuse_mmap;
 }
 
+struct memcached_params {
+    char interface_name[16];
+    bool * expanding_ptr;
+    unsigned int * hashpower_ptr;
+    item*** primary_hashtable_ptr;
+};
+extern bool expanding;
+extern item** primary_hashtable;
+
 int main (int argc, char **argv) {
+    int driver_fd = open("/dev/memcached_ctrl", 0);
+    if (driver_fd < 0) {
+	printf("Error connecting to driver\n");
+	exit(-1);
+    }
+
+    //char interface[16] = "enp101s0f1";
+    struct memcached_params params;
+    strcpy(params.interface_name, "enp101s0f1");
+    params.expanding_ptr = &expanding;
+    params.hashpower_ptr = &hashpower;
+    params.primary_hashtable_ptr = &primary_hashtable;
+    ioctl(driver_fd, 0,(unsigned long) &params);
+
     int c;
     bool lock_memory = false;
     bool do_daemonize = false;
@@ -5912,6 +5937,13 @@ int main (int argc, char **argv) {
         fprintf(stderr, "Failed to initialize hash_algorithm!\n");
         exit(EX_USAGE);
     }
+
+
+	
+
+
+
+
 
     /*
      * Use one workerthread to serve each UDP port if the user specified

@@ -9,10 +9,12 @@ hash_func hash;
 int hash_init(enum hashfunc_type type) {
     switch(type) {
         case JENKINS_HASH:
+            printf("Using jenkins hash\n");	
             hash = jenkins_hash;
             settings.hash_algorithm = "jenkins";
             break;
         case MURMUR3_HASH:
+            printf("Using murmur3 hash\n");
             hash = MurmurHash3_x86_32;
             settings.hash_algorithm = "murmur3";
             break;

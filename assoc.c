@@ -1,4 +1,6 @@
 /* -*- Mode: C; tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*- */
+
+
 /*
  * Hash table
  *
@@ -38,7 +40,8 @@ unsigned int hashpower = HASHPOWER_DEFAULT;
 #define hashmask(n) (hashsize(n)-1)
 
 /* Main hash table. This is where we look except during expansion. */
-static item** primary_hashtable = 0;
+// Making this not static so that the main function can access it
+item** primary_hashtable = 0;
 
 /*
  * Previous hash table. During expansion, we look here for keys that haven't
@@ -47,7 +50,8 @@ static item** primary_hashtable = 0;
 static item** old_hashtable = 0;
 
 /* Flag: Are we in the middle of expanding now? */
-static bool expanding = false;
+// Making this not static so that the main function can access it
+bool expanding = false;
 
 /*
  * During expansion we migrate values with bucket granularity; this is how
