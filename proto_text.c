@@ -471,6 +471,7 @@ static inline void process_get_command(conn *c, token_t *tokens, size_t ntokens,
     assert(c != NULL);
     mc_resp *resp = c->resp;
 
+    c->cmd = CMD_GET;
     if (should_touch) {
         // For get and touch commands, use first token as exptime
         if (!safe_strtol(tokens[1].value, &exptime_int)) {

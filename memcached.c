@@ -3040,7 +3040,16 @@ static enum transmit_result transmit_udp(conn *c) {
     ssize_t res;
     msg.msg_iovlen = iovused;
     // NOTE: uses system sendmsg since we have no support for indirect UDP.
-    res = sendmsg(c->sfd, &msg, 0);
+    if (false && c->cmd == CMD_GET) {
+        // We do not want to write the response for a GET request
+        // For now this is handled inside kernel. 
+        // We will instead just write this to stdout
+       // printf("Bypassing write for GET\n");
+        return TRANSMIT_COMPLETE;	
+        //res = sendmsg(1, &msg, 0);
+        
+    } else
+    	res = sendmsg(c->sfd, &msg, 0);
     if (res >= 0) {
         pthread_mutex_lock(&c->thread->stats.mutex);
         c->thread->stats.bytes_written += res;
@@ -4806,7 +4815,7 @@ int main (int argc, char **argv) {
     params.expanding_ptr = &expanding;
     params.hashpower_ptr = &hashpower;
     params.primary_hashtable_ptr = &primary_hashtable;
-    ioctl(driver_fd, 0,(unsigned long) &params);
+    //ioctl(driver_fd, 0,(unsigned long) &params);
 
     int c;
     bool lock_memory = false;

@@ -248,6 +248,9 @@ enum stop_reasons {
 #define NREAD_APPEND 4
 #define NREAD_PREPEND 5
 #define NREAD_CAS 6
+// This is a new type added to track GET requests 
+// and selectively drop their transmits
+#define CMD_GET (7)
 
 enum store_item_type {
     NOT_STORED=0, STORED, EXISTS, NOT_FOUND, TOO_LARGE, NO_MEMORY
